@@ -1,12 +1,57 @@
-# React + Vite
+# 📊 Excel Analytics Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A powerful MERN-based web application that allows users to upload Excel files, 
+analyze data, and generate interactive 2D and 3D charts. It also provides 
+user-specific upload history and a full-featured admin dashboard for managing platform usage and insights.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+👤 User Functionality
+- Upload `.xls` / `.xlsx` files
+- Preview raw Excel data in a table format
+- Select columns for **X** and **Y** axes
+- Choose chart type: `Bar`, `Line`, `Pie`, `Scatter`
+- Render interactive charts using **Chart.js** or **Three.js**
+- Download charts as **PNG** or **PDF**
+- View upload and chart generation history
+- Re-render saved charts from history
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 🛠 Admin Functionality
+- Secure admin login
+- View total user count, upload count, and chart usage
+- View chart usage by type and drill down into who created what
+- View uploaded file data even if no chart was generated
+- Manage users and files with full control
+
+
+#### 🧱 Tech Stack
+
+# 🌐 Frontend
+- **React.js** – UI library for building component-based interfaces
+- **Tailwind CSS** – Utility-first CSS framework for fast, responsive styling
+- **Framer Motion** – Smooth animations and transitions
+- **Chart.js** – Render 2D charts (Bar, Line, Pie, etc.)
+- **Three.js** – Optional 3D chart support
+- **React Router DOM** – Client-side routing
+- **jsPDF** – Export rendered charts to PDF
+- **html2canvas** – Capture DOM elements as images for export
+
+## 🖥️ Backend
+- **Node.js** – JavaScript runtime environment
+- **Express.js** – Web framework for handling API requests
+- **MongoDB** – NoSQL database for data storage
+- **Mongoose** – ODM for MongoDB schema modeling
+- **Multer** – Middleware for handling file uploads
+- **SheetJS (xlsx)** – Parse Excel files and extract data
+- **jsonwebtoken (JWT)** – Token-based authentication
+- **bcrypt.js** – Password hashing for secure login
+
+### 🔧 Other Tools & Services
+- **JWT Auth** – Secure user/admin authentication system
+- **LocalStorage** – Stores JWT token on the frontend
+- **Vite** – Fast development server and build tool for React
+- **Postman** – API testing and debugging
+- **Git + GitHub** – Version control and collaboration
+- **Render / Railway** – Suggested platforms for backend deployment
+- **MongoDB Atlas** – Cloud-based MongoDB hosting
