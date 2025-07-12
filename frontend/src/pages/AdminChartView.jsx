@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
-import { Bar, Line, Pie, Scatter } from "react-chartjs-2";
-import { Chart, registerables } from "chart.js";
-Chart.register(...registerables);
+import ChartRenderer from "../components/ChartRenderer"; // Adjust path if needed
 
 const AdminChartView = () => {
   const { id } = useParams();
@@ -32,7 +30,7 @@ const AdminChartView = () => {
           },
         });
         setRecord(res.data);
-        setCurrentPage(1); // ✅ reset page to 1 when new data loads
+        setCurrentPage(1);
 
         if (!res.data.chartData || res.data.chartData.length === 0) {
           setError("No chart data available.");
@@ -58,73 +56,15 @@ const AdminChartView = () => {
   const generateChart = () => {
     if (!record?.chartData?.length) return null;
 
-    const labels = record.chartData.map((d) => d[record.selectedX]);
-    const dataPoints = record.chartData.map((d) => d[record.selectedY]);
-
-    const options = {
-      responsive: true,
-      plugins: {
-        legend: { position: "top" },
-        title: { display: true, text: `${record.chartType} Chart` },
-      },
-    };
-
-    const pieColors = [
-      "#f87171", "#60a5fa", "#34d399", "#fbbf24",
-      "#a78bfa", "#f472b6", "#38bdf8", "#fb923c",
-    ];
-
-    if (record.chartType === "scatter") {
-      return (
-        <Scatter
-          data={{
-            datasets: [{
-              label: `${record.selectedY} vs ${record.selectedX}`,
-              data: record.chartData.map(d => ({
-                x: parseFloat(d[record.selectedX]),
-                y: parseFloat(d[record.selectedY]),
-              })),
-              backgroundColor: "#34d399",
-            }],
-          }}
-          options={options}
-        />
-      );
-    }
-
-    if (record.chartType === "pie") {
-      return (
-        <Pie
-          data={{
-            labels,
-            datasets: [{
-              label: `${record.selectedY} vs ${record.selectedX}`,
-              data: dataPoints,
-              backgroundColor: labels.map((_, i) => pieColors[i % pieColors.length]),
-              borderColor: "#fff",
-              borderWidth: 2,
-            }],
-          }}
-          options={options}
-        />
-      );
-    }
-
-    const chartData = {
-      labels,
-      datasets: [{
-        label: `${record.selectedY} vs ${record.selectedX}`,
-        data: dataPoints,
-        backgroundColor: "#60a5fa",
-        borderColor: "#3b82f6",
-        borderWidth: 2,
-      }],
-    };
-
-    if (record.chartType === "bar") return <Bar data={chartData} options={options} />;
-    if (record.chartType === "line") return <Line data={chartData} options={options} />;
-
-    return <p>Unsupported chart type.</p>;
+    return (
+      <ChartRenderer
+        data={record.chartData}
+        xKey={record.selectedX}
+        yKey={record.selectedY}
+        chartType={record.chartType}
+        mode={record.mode}
+      />
+    );
   };
 
   return (
@@ -135,7 +75,9 @@ const AdminChartView = () => {
         <p>Loading data...</p>
       ) : (
         <>
-          <h2 className="text-3xl text-center font-bold mb-4 mt-4">User: {record.user?.email}</h2>
+          <h2 className="text-3xl text-center font-bold mb-4 mt-4">
+            User: {record.user?.email}
+          </h2>
 
           {from === "uploadedFiles" || !record?.chartType ? (
             <>
@@ -146,7 +88,10 @@ const AdminChartView = () => {
                     <thead className="bg-slate-200">
                       <tr>
                         {Object.keys(record.chartData[0]).map((col, idx) => (
-                          <th key={idx} className="px-4 py-2 border text-left font-semibold">
+                          <th
+                            key={idx}
+                            className="px-4 py-2 border text-left font-semibold"
+                          >
                             {col}
                           </th>
                         ))}
@@ -156,13 +101,13 @@ const AdminChartView = () => {
                       {paginatedData.map((row, i) => (
                         <tr key={i} className="hover:bg-slate-100">
                           {Object.values(row).map((val, idx) => (
-                            <td key={idx} className="px-4 py-2 border">{val}</td>
+                            <td key={idx} className="px-4 py-2 border">
+                              {val}
+                            </td>
                           ))}
                         </tr>
                       ))}
                     </tbody>
-
-                    {/* ✅ Pagination inside the table */}
                     {record.chartData?.length > rowsPerPage && (
                       <tfoot>
                         <tr>
@@ -171,7 +116,9 @@ const AdminChartView = () => {
                               <button
                                 disabled={currentPage === 1}
                                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                                className={`px-3 py-1 rounded bg-slate-700 hover:bg-slate-800 text-white ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+                                className={`px-3 py-1 rounded bg-slate-700 hover:bg-slate-800 text-white ${
+                                  currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+                                }`}
                               >
                                 ← Previous
                               </button>
@@ -181,7 +128,9 @@ const AdminChartView = () => {
                               <button
                                 disabled={currentPage === totalPages}
                                 onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                                className={`px-3 py-1 rounded bg-slate-700 hover:bg-slate-800 text-white ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""}`}
+                                className={`px-3 py-1 rounded bg-slate-700 hover:bg-slate-800 text-white ${
+                                  currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
+                                }`}
                               >
                                 Next →
                               </button>
@@ -191,7 +140,6 @@ const AdminChartView = () => {
                       </tfoot>
                     )}
                   </table>
-
                 ) : (
                   <p className="text-gray-600">No data found in file.</p>
                 )}
@@ -213,7 +161,7 @@ const AdminChartView = () => {
 
           <button
             onClick={handleBack}
-            className="mt-2 ms-43 bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded"
+            className="mt-2 ms-162 bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded"
           >
             ⬅ Back to {from === "uploadedFiles" ? "Uploaded Files" : from ? `${from} Charts` : "Dashboard"}
           </button>

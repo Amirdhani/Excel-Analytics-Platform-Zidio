@@ -427,31 +427,55 @@ const AdminDashboard = () => {
 
 
 
-          {["bar", "line", "pie", "scatter"].includes(viewMode) && (
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <h3 className="text-2xl text-center font-semibold mb-4 capitalize">{viewMode} Charts</h3>
-              <div className="flex justify-center overflow-x-auto">
-                <table className="w-3xl justify-center border border-gray-700 rounded overflow-hidden text-sm">
-                  <thead className="bg-slate-800">
-                    <tr>
-                      <th className="border px-2 py-1 text-center">User</th>
-                      <th className="border px-2 py-1 text-center">X Axis</th>
-                      <th className="border px-2 py-1 text-center">Y Axis</th>
-                      <th className="border px-2 py-1 text-center">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {uploads
-                      .filter((u) => u.chartType === viewMode)
-                      .map((u) => (
-                        <tr key={u._id} className="hover:bg-slate-800">
+          {["bar", "line", "pie", "scatter"].includes(viewMode) && (() => {
+            const chartUploads = uploads.filter((u) => u.chartType === viewMode);
+            const count2D = chartUploads.filter((u) => (u.mode?.toUpperCase?.() ?? "2D") === "2D").length;
+            const count3D = chartUploads.filter((u) => (u.mode?.toUpperCase?.() ?? "2D") === "3D").length;
+
+
+            return (
+              <motion.section
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <h3 className="text-2xl text-center font-semibold mb-4 capitalize">{viewMode} Charts</h3>
+
+                {/* ✅ Summary for 2D / 3D */}
+                <div className="flex justify-center gap-12 mb-8">
+                  <div className="bg-slate-800 text-white p-6 rounded-lg shadow text-center">
+                    <h4 className="text-lg font-bold">2D Charts</h4>
+                    <p className="text-2xl text-green-400 font-bold">{count2D}</p>
+                  </div>
+                  <div className="bg-slate-800 text-white p-6 rounded-lg shadow text-center">
+                    <h4 className="text-lg font-bold">3D Charts</h4>
+                    <p className="text-2xl text-yellow-400 font-bold">{count3D}</p>
+                  </div>
+                  <div className="bg-slate-800 text-white p-6 rounded-lg shadow text-center">
+                    <h4 className="text-lg font-bold">Total</h4>
+                    <p className="text-2xl text-blue-400 font-bold">{chartUploads.length}</p>
+                  </div>
+                </div>
+
+                {/* ✅ Table of charts */}
+                <div className="flex justify-center overflow-x-auto">
+                  <table className="w-3xl justify-center border border-gray-700 rounded overflow-hidden text-sm">
+                    <thead className="bg-slate-800">
+                      <tr>
+                        <th className="border px-2 py-1 text-center">User</th>
+                        <th className="border px-2 py-1 text-center">X Axis</th>
+                        <th className="border px-2 py-1 text-center">Y Axis</th>
+                        <th className="border px-2 py-1 text-center">Chart Mode</th>
+                        <th className="border px-2 py-1 text-center">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {chartUploads.map((u) => (
+                        <tr key={u._id} className="hover:bg-slate-800 text-white">
                           <td className="border text-center px-2 py-1">{u.user?.email}</td>
                           <td className="border text-center px-2 py-1">{u.selectedX}</td>
                           <td className="border text-center px-2 py-1">{u.selectedY}</td>
+                          <td className="border text-center px-2 py-1">{u.mode?.toUpperCase?.() ?? "2D"}</td>
                           <td className="border text-center px-2 py-1">
                             <button
                               onClick={() =>
@@ -466,20 +490,23 @@ const AdminDashboard = () => {
                           </td>
                         </tr>
                       ))}
-                  </tbody>
-                </table>
-              </div>
-              <button
-                onClick={() => {
-                  setSearchParams({ viewMode: "charts" });
-                  setViewMode("charts");
-                }}
-                className="ms-90 mt-4 bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded"
-              >
-                Back to Chart Summary
-              </button>
-            </motion.section>
-          )}
+                    </tbody>
+                  </table>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setSearchParams({ viewMode: "charts" });
+                    setViewMode("charts");
+                  }}
+                  className="ms-90 mt-4 bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded"
+                >
+                  Back to Chart Summary
+                </button>
+              </motion.section>
+            );
+          })()}
+
 
 
           {/* Show Manage Users only when not viewing detailed lists */}
