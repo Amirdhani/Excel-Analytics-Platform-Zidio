@@ -9,7 +9,7 @@ const History = () => {
   const navigate = useNavigate();
   const [selectedIds, setSelectedIds] = useState([]);
   const [deleteMode, setDeleteMode] = useState(false);
-  const [filter, setFilter] = useState("all"); // all | uploaded | generated
+  const [filter, setFilter] = useState("all"); // all | uploaded | generated | 2d | 3d
 
   const fetchHistory = async () => {
     try {
@@ -73,6 +73,10 @@ const History = () => {
       return !record.selectedX && !record.selectedY && !record.chartType;
     } else if (filter === "generated") {
       return record.selectedX && record.selectedY && record.chartType;
+    } else if (filter === "2d") {
+      return record.mode === "2d";
+    } else if (filter === "3d") {
+      return record.mode === "3d";
     }
     return true;
   });
@@ -87,15 +91,13 @@ const History = () => {
       ) : (
         <div className="overflow-x-auto max-w-6xl mx-auto bg-white text-black rounded-xl shadow">
           <div className="p-4 flex flex-wrap gap-4 justify-center">
-            <div>
-              <button
-                onClick={() => navigate("/dashboard")}
-                className="bg-green-800 hover:bg-green-700 text-amber-200 font-semibold px-4 py-2 rounded-lg shadow-md"
-              >
-                ← Back to Dashboard
-              </button>
-            </div>
-           
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="bg-green-800 hover:bg-green-700 text-amber-200 font-semibold px-4 py-2 rounded-lg shadow-md"
+            >
+              ← Back to Dashboard
+            </button>
+
             <button
               onClick={handleDeleteClick}
               className={`${
@@ -120,6 +122,20 @@ const History = () => {
             </button>
 
             <button
+              onClick={() => setFilter("2d")}
+              className="bg-yellow-600 hover:bg-yellow-500 text-white px-4 py-2 rounded-xl"
+            >
+              2D Charts
+            </button>
+
+            <button
+              onClick={() => setFilter("3d")}
+              className="bg-pink-600 hover:bg-pink-500 text-white px-4 py-2 rounded-xl"
+            >
+              3D Charts
+            </button>
+
+            <button
               onClick={() => setFilter("all")}
               className="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded-xl"
             >
@@ -137,6 +153,7 @@ const History = () => {
                 <th className="border px-4 py-2 text-center">X-Axis</th>
                 <th className="border px-4 py-2 text-center">Y-Axis</th>
                 <th className="border px-4 py-2 text-center">Chart Type</th>
+                <th className="border px-4 py-2 text-center">Chart Mode</th>
                 <th className="border px-4 py-2 text-center">Uploaded Date</th>
                 <th className="border px-4 py-2 text-center">Uploaded Time</th>
               </tr>
@@ -159,6 +176,9 @@ const History = () => {
                   <td className="border text-center px-4 py-2">{record.selectedY || "-"}</td>
                   <td className="border text-center px-4 py-2 capitalize">
                     {record.chartType || "-"}
+                  </td>
+                  <td className="border text-center px-4 py-2 uppercase">
+                    {record.mode || "-"}
                   </td>
                   <td className="border text-center px-4 py-2">
                     {new Date(record.createdAt).toLocaleDateString("en-IN", {

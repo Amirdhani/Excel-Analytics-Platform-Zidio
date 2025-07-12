@@ -11,6 +11,11 @@ const analysisSchema = new mongoose.Schema({
   selectedY: String,
   chartType: String,  // bar, line, pie, 3d, etc.
   chartData: [mongoose.Schema.Types.Mixed],
+  mode: {
+    type: String,
+    enum: ["2d", "3d"],
+    default: "2d"
+  },
   createdAt: {
     type: Date,
     default: Date.now

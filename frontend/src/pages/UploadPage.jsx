@@ -20,6 +20,8 @@ const Upload = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
   const rowsPerPage = 10;
+  const [webglCanvas, setWebglCanvas] = useState(null);
+
 
   const handleFileUpload = async (e) => {
     e.preventDefault();
@@ -63,7 +65,7 @@ const Upload = () => {
       formData.append("selectedX", selectedX);
       formData.append("selectedY", selectedY);
       formData.append("chartType", chartType);
-      formData.append("chartMode", chartMode); // if your backend needs it
+      formData.append("mode", chartMode); // if your backend needs it
       const token = localStorage.getItem("token");
 
       const res = await axios.post("http://localhost:3000/api/analysis/upload", formData, {
@@ -80,31 +82,82 @@ const Upload = () => {
     }
   };
 
-  const downloadChartAsImage = () => {
-    const canvas = document.querySelector("#chart-renderer canvas");
-    if (!canvas) return;
+  const downloadChartAsImage = async () => {
+    if (chartMode === "3d") {
+      if (!webglCanvas) {
+        alert("3D chart is not ready yet.");
+        return;
+      }
 
-    const image = canvas.toDataURL("image/png");
-    const link = document.createElement("a");
-    link.href = image;
-    link.download = "chart.png";
-    link.click();
+      const tempCanvas = document.createElement("canvas");
+      const ctx = tempCanvas.getContext("2d");
+
+      tempCanvas.width = webglCanvas.width;
+      tempCanvas.height = webglCanvas.height;
+
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+      ctx.drawImage(webglCanvas, 0, 0);
+
+      const finalURL = tempCanvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = finalURL;
+      link.download = "3d_chart.png";
+      link.click();
+    } else {
+      // 2D chart - use html2canvas
+      const chartElement = document.querySelector("#chart-renderer");
+      if (!chartElement) return;
+
+      const canvas = await html2canvas(chartElement, {
+        backgroundColor: "#ffffff", // force white background
+        scale: 2,
+      });
+
+      const imageURL = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = imageURL;
+      link.download = "2d_chart.png";
+      link.click();
+    }
   };
 
-  const downloadChartAsPDF = async () => {
-    const chartElement = document.querySelector("#chart-renderer");
-    if (!chartElement) return;
 
-    const canvas = await html2canvas(chartElement);
-    const imgData = canvas.toDataURL("image/png");
+  const downloadChartAsPDF = async () => {
     const pdf = new jsPDF("landscape", "mm", "a4");
 
-    const imgProps = pdf.getImageProperties(imgData);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    if (chartMode === "3d") {
+      if (!webglCanvas) {
+        alert("3D chart is not ready yet.");
+        return;
+      }
 
-    pdf.addImage(imgData, "PNG", 10, 10, pdfWidth - 20, pdfHeight);
-    pdf.save("chart.pdf");
+      requestAnimationFrame(() => {
+        const image = webglCanvas.toDataURL("image/png");
+        const imgProps = pdf.getImageProperties(image);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+        pdf.addImage(image, "PNG", 10, 10, pdfWidth - 20, pdfHeight);
+        pdf.save("3d_chart.pdf");
+      });
+    } else {
+      const chartElement = document.querySelector("#chart-renderer");
+      if (!chartElement) return;
+
+      const canvas = await html2canvas(chartElement, {
+        backgroundColor: "#ffffff",
+        scale: 2,
+      });
+
+      const imgData = canvas.toDataURL("image/png");
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      pdf.addImage(imgData, "PNG", 10, 10, pdfWidth - 20, pdfHeight);
+      pdf.save("2d_chart.pdf");
+    }
   };
 
   return (
@@ -249,6 +302,7 @@ const Upload = () => {
               yKey={selectedY}
               chartType={chartType}
               mode={chartMode}
+              onCanvasReady={setWebglCanvas}
             />
           </div>
 

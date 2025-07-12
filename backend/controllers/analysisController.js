@@ -27,6 +27,7 @@ export const parseExcel = async (req, res) => {
       selectedY,
       chartType,
       chartData: jsonData,
+      mode: req.body.mode || "2d",
     });
 
     // Send columns and full data back to frontend
