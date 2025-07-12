@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import ChartRenderer from "../components/ChartRenderer"; 
+import ChartRenderer from "../components/ChartRenderer";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { motion } from "framer-motion";
-
 
 const Upload = () => {
   const [file, setFile] = useState(null);
@@ -14,11 +13,11 @@ const Upload = () => {
   const [selectedX, setSelectedX] = useState("");
   const [selectedY, setSelectedY] = useState("");
   const [chartType, setChartType] = useState("");
+  const [chartMode, setChartMode] = useState(""); // "2d" or "3d"
   const [chartData, setChartData] = useState([]);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
   const [currentPage, setCurrentPage] = useState(0);
   const rowsPerPage = 10;
 
@@ -53,7 +52,7 @@ const Upload = () => {
     setError("");
     setSuccess("");
 
-    if (!selectedX || !selectedY || !chartType) {
+    if (!selectedX || !selectedY || !chartType || !chartMode) {
       setError("Please select all chart options.");
       return;
     }
@@ -64,6 +63,7 @@ const Upload = () => {
       formData.append("selectedX", selectedX);
       formData.append("selectedY", selectedY);
       formData.append("chartType", chartType);
+      formData.append("chartMode", chartMode); // if your backend needs it
       const token = localStorage.getItem("token");
 
       const res = await axios.post("http://localhost:3000/api/analysis/upload", formData, {
@@ -80,7 +80,6 @@ const Upload = () => {
     }
   };
 
-
   const downloadChartAsImage = () => {
     const canvas = document.querySelector("#chart-renderer canvas");
     if (!canvas) return;
@@ -90,34 +89,33 @@ const Upload = () => {
     link.href = image;
     link.download = "chart.png";
     link.click();
- };
+  };
 
-const downloadChartAsPDF = async () => {
-  const chartElement = document.querySelector("#chart-renderer");
-  if (!chartElement) return;
+  const downloadChartAsPDF = async () => {
+    const chartElement = document.querySelector("#chart-renderer");
+    if (!chartElement) return;
 
-  const canvas = await html2canvas(chartElement);
-  const imgData = canvas.toDataURL("image/png");
-  const pdf = new jsPDF("landscape", "mm", "a4");
+    const canvas = await html2canvas(chartElement);
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("landscape", "mm", "a4");
 
-  const imgProps = pdf.getImageProperties(imgData);
-  const pdfWidth = pdf.internal.pageSize.getWidth();
-  const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-  pdf.addImage(imgData, "PNG", 10, 10, pdfWidth - 20, pdfHeight);
-  pdf.save("chart.pdf");
-};
-
+    pdf.addImage(imgData, "PNG", 10, 10, pdfWidth - 20, pdfHeight);
+    pdf.save("chart.pdf");
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-900 to-green-700 text-white flex flex-col items-center justify-center px-4">
       <motion.h1
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-          className="text-2xl md:text-4xl font-bold text-amber-100 drop-shadow-lg text-center"
-        >
-          Upload Excel File
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+        className="text-2xl md:text-4xl font-bold text-amber-100 drop-shadow-lg text-center"
+      >
+        Upload Excel File
       </motion.h1>
 
       <motion.form
@@ -127,7 +125,6 @@ const downloadChartAsPDF = async () => {
         transition={{ duration: 0.8, delay: 0.3 }}
         className="bg-green-800 p-6 rounded-xl shadow-md space-y-4 mt-4 w-full max-w-md"
       >
-
         <input
           type="file"
           accept=".xls,.xlsx"
@@ -149,7 +146,6 @@ const downloadChartAsPDF = async () => {
           ← Back to Dashboard
         </button>
       </div>
-
 
       {columns.length > 0 && (
         <motion.form
@@ -190,20 +186,52 @@ const downloadChartAsPDF = async () => {
           </div>
 
           <div>
-            <label className="block text-sm text-amber-100 mb-1">Select Chart Type:</label>
-            <select
-              className="w-full px-3 py-2 rounded bg-green-900 border border-green-500 text-white"
-              value={chartType}
-              onChange={(e) => setChartType(e.target.value)}
-              required
-            >
-              <option value="">-- Select Chart Type --</option>
-              <option value="bar">Bar</option>
-              <option value="line">Line</option>
-              <option value="pie">Pie</option>
-              <option value="scatter">Scatter</option>
-            </select>
+            <label className="block text-sm text-amber-100 mb-1">Select Chart Mode:</label>
+            <div className="flex gap-4">
+              <button
+                type="button"
+                onClick={() => {
+                  setChartMode("2d");
+                  setChartType("");
+                }}
+                className={`px-4 py-2 rounded ${
+                  chartMode === "2d" ? "bg-amber-600" : "bg-green-700"
+                } text-white`}
+              >
+                2D Chart
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setChartMode("3d");
+                  setChartType("");
+                }}
+                className={`px-4 py-2 rounded ${
+                  chartMode === "3d" ? "bg-amber-600" : "bg-green-700"
+                } text-white`}
+              >
+                3D Chart
+              </button>
+            </div>
           </div>
+
+          {chartMode && (
+            <div>
+              <label className="block text-sm text-amber-100 mb-1">Select {chartMode.toUpperCase()} Chart Type:</label>
+              <select
+                className="w-full px-3 py-2 rounded bg-green-900 border border-green-500 text-white"
+                value={chartType}
+                onChange={(e) => setChartType(e.target.value)}
+                required
+              >
+                <option value="">-- Select Chart Type --</option>
+                <option value="bar">Bar</option>
+                <option value="line">Line</option>
+                <option value="pie">Pie</option>
+                <option value="scatter">Scatter</option>
+              </select>
+            </div>
+          )}
 
           <button type="submit" className="w-full bg-amber-600 hover:bg-amber-500 py-2 rounded font-semibold">
             Generate Chart
@@ -211,16 +239,20 @@ const downloadChartAsPDF = async () => {
         </motion.form>
       )}
 
-
       {chartData.length > 0 && (
         <div className="mt-8 w-full max-w-4xl bg-white text-black p-6 rounded-xl shadow-lg">
           <h2 className="text-xl font-bold mb-4 text-center">Chart Preview</h2>
-
           <div id="chart-renderer">
-            <ChartRenderer data={chartData} xKey={selectedX} yKey={selectedY} chartType={chartType} />
+            <ChartRenderer
+              data={chartData}
+              xKey={selectedX}
+              yKey={selectedY}
+              chartType={chartType}
+              mode={chartMode}
+            />
           </div>
 
-          <div className="flex justify-center gap-4 mt-6">
+          <div className="flex justify-center gap-4 mt-2">
             <button
               onClick={downloadChartAsImage}
               className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-600 transition"
@@ -235,70 +267,67 @@ const downloadChartAsPDF = async () => {
             </button>
           </div>
         </div>
-     )}
+      )}
 
-
-    {data.length > 0 && (
-      <div className="mt-10 w-full overflow-auto bg-white rounded-lg shadow p-4 max-w-6xl">
-        <h3 className="text-lg font-semibold text-center mb-3 text-gray-800">Raw Data Preview</h3>
-
-        <table className="min-w-full table-auto border border-gray-300">
-          <thead className="bg-gray-100">
-            <tr>
-              {columns.map((col, i) => (
-                <th key={i} className="border px-3 py-1 text-sm text-gray-800">{col}</th>
+      {data.length > 0 && (
+        <div className="mt-10 w-full overflow-auto bg-white rounded-lg shadow p-4 max-w-6xl">
+          <h3 className="text-lg font-semibold text-center mb-3 text-gray-800">Raw Data Preview</h3>
+          <table className="min-w-full table-auto border border-gray-300">
+            <thead className="bg-gray-100">
+              <tr>
+                {columns.map((col, i) => (
+                  <th key={i} className="border px-3 py-1 text-sm text-gray-800">{col}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {data
+                .slice(currentPage * rowsPerPage, (currentPage + 1) * rowsPerPage)
+                .map((row, i) => (
+                  <tr key={i} className="hover:bg-gray-50">
+                    {columns.map((col, j) => (
+                      <td key={j} className="border px-3 py-1 text-xs text-gray-700">
+                        {row[col]}
+                      </td>
+                    ))}
+                  </tr>
               ))}
-            </tr>
-          </thead>
-          <tbody>
-            {data
-              .slice(currentPage * rowsPerPage, (currentPage + 1) * rowsPerPage)
-              .map((row, i) => (
-                <tr key={i} className="hover:bg-gray-50">
-                  {columns.map((col, j) => (
-                    <td key={j} className="border px-3 py-1 text-xs text-gray-700">
-                      {row[col]}
-                    </td>
-                  ))}
-                </tr>
-            ))}
-          </tbody>
-        </table>
+            </tbody>
+          </table>
 
-        <div className="flex justify-between items-center mt-4">
-          <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
-            disabled={currentPage === 0}
-            className={`px-3 py-1 rounded bg-green-600 text-white ${
-              currentPage === 0 ? "opacity-50 cursor-not-allowed" : "hover:bg-green-500"
-            }`}
-          >
-            ← Previous
-          </button>
+          <div className="flex justify-between items-center mt-4">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
+              disabled={currentPage === 0}
+              className={`px-3 py-1 rounded bg-green-600 text-white ${
+                currentPage === 0 ? "opacity-50 cursor-not-allowed" : "hover:bg-green-500"
+              }`}
+            >
+              ← Previous
+            </button>
 
-          <p className="text-sm text-gray-700">
-            Showing {currentPage * rowsPerPage + 1}–
-            {Math.min((currentPage + 1) * rowsPerPage, data.length)} of {data.length} rows
-          </p>
+            <p className="text-sm text-gray-700">
+              Showing {currentPage * rowsPerPage + 1}–{Math.min((currentPage + 1) * rowsPerPage, data.length)} of {data.length} rows
+            </p>
 
-          <button
-            onClick={() =>
-              setCurrentPage((prev) =>
-                (prev + 1) * rowsPerPage < data.length ? prev + 1 : prev
-              )
-            }
-            disabled={(currentPage + 1) * rowsPerPage >= data.length}
-            className={`px-3 py-1 rounded bg-green-600 text-white ${
-              (currentPage + 1) * rowsPerPage >= data.length
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-green-500"
-            }`}
-          >
-            Next →
-          </button>
+            <button
+              onClick={() =>
+                setCurrentPage((prev) =>
+                  (prev + 1) * rowsPerPage < data.length ? prev + 1 : prev
+                )
+              }
+              disabled={(currentPage + 1) * rowsPerPage >= data.length}
+              className={`px-3 py-1 rounded bg-green-600 text-white ${
+                (currentPage + 1) * rowsPerPage >= data.length
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-green-500"
+              }`}
+            >
+              Next →
+            </button>
+          </div>
         </div>
-      </div>
-    )}
+      )}
     </div>
   );
 };
