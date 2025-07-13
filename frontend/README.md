@@ -12,7 +12,7 @@ user-specific upload history and a full-featured admin dashboard for managing pl
 - Preview raw Excel data in a table format
 - Select columns for **X** and **Y** axes
 - Choose chart type: `Bar`, `Line`, `Pie`, `Scatter`
-- Render interactive charts using **Chart.js** or **Three.js**
+- Render interactive charts using **Chart.js** and **Three.js**
 - Download charts as **PNG** or **PDF**
 - View upload and chart generation history
 - Re-render saved charts from history
@@ -31,8 +31,8 @@ user-specific upload history and a full-featured admin dashboard for managing pl
 - **React.js** – UI library for building component-based interfaces
 - **Tailwind CSS** – Utility-first CSS framework for fast, responsive styling
 - **Framer Motion** – Smooth animations and transitions
-- **Chart.js** – Render 2D charts (Bar, Line, Pie, etc.)
-- **Three.js** – Optional 3D chart support
+- **Chart.js** – Render 2D charts (Bar, Line, Pie, Scatter )
+- **Three.js** – 3D chart support (Bar, Line, Pie, Scatter )
 - **React Router DOM** – Client-side routing
 - **jsPDF** – Export rendered charts to PDF
 - **html2canvas** – Capture DOM elements as images for export
