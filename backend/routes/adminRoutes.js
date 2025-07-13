@@ -2,7 +2,9 @@ import express from "express";
 import {
   getStats,
   getAllUsers,
-  deleteUser
+  deleteUser,
+  getTopCharts,
+  getFileUploadOnly
 } from "../controllers/adminController.js";
 
 import { getAllUploads, getAdminSingleAnalysis } from "../controllers/analysisController.js"; // ✅ import here
@@ -13,8 +15,11 @@ const router = express.Router();
 router.get("/stats", protect, isAdmin, getStats);
 router.get("/users", protect, isAdmin, getAllUsers);
 router.delete("/users/:id", protect, isAdmin, deleteUser);
-router.get("/analysis", protect, isAdmin, getAllUploads); // ✅ add this line
+router.get("/analysis", protect, isAdmin, getAllUploads); 
 router.get("/analysis/:id", protect, isAdmin, getAdminSingleAnalysis);
+
+router.get("/top-charts", protect, isAdmin, getTopCharts);
+router.get("/file-uploads", protect, isAdmin, getFileUploadOnly);
 
 
 export default router;
