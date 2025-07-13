@@ -74,7 +74,13 @@ const History = () => {
     } else if (filter === "generated") {
       return record.selectedX && record.selectedY && record.chartType;
     } else if (filter === "2d") {
-      return record.mode === "2d";
+      return (
+        record.mode?.toLowerCase() === "2d" &&
+        record.filename &&
+        record.selectedX &&
+        record.selectedY &&
+        record.chartType
+      );
     } else if (filter === "3d") {
       return record.mode === "3d";
     }

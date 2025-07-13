@@ -2,13 +2,15 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import { Toaster } from "react-hot-toast";
 import 'react-toastify/dist/ReactToastify.css';
+
 import Register from "./components/Register";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
+import Admin from "./components/Admin";
+
 import Upload from "./pages/UploadPage";
 import History from "./pages/History";
 import AdminDashboard from "./pages/AdminDashboard";
-import AdminRoute from "./components/AdminRoute";
 import AdminChartView from "./pages/AdminChartView";
 
 
@@ -27,9 +29,9 @@ function App() {
         <Route path="/admin/view/:id" element={<AdminChartView />} />
 
         <Route path="/admin" element={
-            <AdminRoute>
+            <Admin>
               <AdminDashboard />
-            </AdminRoute>
+            </Admin>
           }
         />
       </Routes>

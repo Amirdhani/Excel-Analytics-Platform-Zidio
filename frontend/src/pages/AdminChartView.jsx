@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
-import ChartRenderer from "../components/ChartRenderer"; // Adjust path if needed
+import ChartRenderer from "../components/ChartRenderer"; 
 
 const AdminChartView = () => {
   const { id } = useParams();

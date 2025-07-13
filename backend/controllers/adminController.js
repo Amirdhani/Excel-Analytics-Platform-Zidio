@@ -4,10 +4,11 @@ import Analysis from "../models/Analysis.js";
 // 1. Get usage stats
 export const getStats = async (req, res) => {
   try {
-    const totalUsers = await User.countDocuments();
+    const totalUsers = await User.countDocuments({ role: "user" });
     const totalUploads = await Analysis.countDocuments();
 
     const chartStats = await Analysis.aggregate([
+      { $match: { chartType: { $in: ["bar", "line", "pie", "scatter"] } } },
       { $group: { _id: "$chartType", count: { $sum: 1 } } },
       { $sort: { count: -1 } }
     ]);

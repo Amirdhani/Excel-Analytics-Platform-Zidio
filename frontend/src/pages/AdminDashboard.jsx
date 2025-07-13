@@ -178,7 +178,22 @@ const AdminDashboard = () => {
               <div>
                 <p className="text-gray-300">Top Chart Type</p>
                 <h4 className="text-xl font-bold">
-                  {stats?.mostUsedCharts?.[0]?._id ?? "N/A"} ({stats?.mostUsedCharts?.[0]?.count ?? 0})
+                  {(() => {
+                    const charts = stats?.mostUsedCharts ?? [];
+                    if (charts.length === 0) return <h4 className="text-xl font-bold">N/A (0)</h4>;
+
+                    const topCount = charts[0].count;
+                    const topCharts = charts.filter(c => c.count === topCount);
+
+                    return topCharts.length === 1 ? (
+                      <h4 className="text-xl font-bold capitalize">
+                        {topCharts[0]._id} ({topCharts[0].count})
+                      </h4>
+                    ) : (
+                      <h4 className="text-xl font-bold">N/A ({topCount})</h4>
+                    );
+                  })()}
+
                 </h4>
               </div>
             </div>
@@ -217,7 +232,7 @@ const AdminDashboard = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map((user) => (
+                        {users.filter(user => user.role !== 'admin').map((user) => (
                         <tr key={user._id} className="hover:bg-slate-800">
                             <td className="text-center text-amber-100 border px-4 py-2">{user.name}</td>
                             <td className="text-center text-amber-100 border pr-1 py-2">{user.email}</td>
@@ -516,7 +531,7 @@ const AdminDashboard = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
             >
-              <h3 className="text-2xl text-center uppercase font-semibold mb-4">Manage Users</h3>
+              <h3 className="text-2xl text-center uppercase font-semibold mb-4">User & Admin Accounts</h3>
               {users.length > 0 ? (
                 <div className="flex justify-center">
                   <table className="w-4xl border border-gray-700 rounded overflow-hidden">
@@ -533,13 +548,18 @@ const AdminDashboard = () => {
                           <td className="text-center border px-4 py-2">{user.name}</td>
                           <td className="text-center border px-4 py-2">{user.email}</td>
                           <td className="text-center border px-4 py-2">
-                            <button
-                              onClick={() => deleteUser(user._id)}
-                              className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
-                            >
-                              Delete
-                            </button>
+                            {user.role === "admin" ? (
+                              <span className="text-gray-400 italic">Admin</span>
+                            ) : (
+                              <button
+                                onClick={() => deleteUser(user._id)}
+                                className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+                              >
+                                Delete
+                              </button>
+                            )}
                           </td>
+
                         </tr>
                       ))}
                     </tbody>
