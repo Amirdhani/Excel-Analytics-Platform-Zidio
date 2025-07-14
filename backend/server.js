@@ -15,7 +15,10 @@ dotenv.config();
 const app = express();
 connectDB();
 
-app.use(cors());
+app.use(cors({
+  origin: 'https://analytics-excel-platform.netlify.app',
+  credentials: true
+}));
 app.use(express.json());
 
 // Routes
