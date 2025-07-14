@@ -15,7 +15,7 @@ import AdminChartView from "./pages/AdminChartView";
 
 import axios from "axios";
 
-// Configure Axios
+// Configure the Axios
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 axios.defaults.withCredentials = true;
 
