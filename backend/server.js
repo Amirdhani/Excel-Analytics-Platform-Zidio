@@ -15,24 +15,7 @@ dotenv.config();
 const app = express();
 connectDB();
 
-const allowedOrigins = [
-  process.env.CLIENT_URL,
-  "http://localhost:5173" // ✅ for local development
-];
-
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true
-}));
-
-console.log("🌍 Allowed CORS Origin:", process.env.CLIENT_URL);
-
+app.use(cors());
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
@@ -48,5 +31,5 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on PORT ${PORT}`);
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });

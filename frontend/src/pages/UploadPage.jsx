@@ -34,7 +34,7 @@ const Upload = () => {
       formData.append("file", file);
       const token = localStorage.getItem("token");
 
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/analysis/upload`, formData, {
+      const res = await axios.post("http://localhost:3000/api/analysis/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
@@ -68,7 +68,7 @@ const Upload = () => {
       formData.append("mode", chartMode); // if your backend needs it
       const token = localStorage.getItem("token");
 
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/analysis/upload`, formData, {
+      const res = await axios.post("http://localhost:3000/api/analysis/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,

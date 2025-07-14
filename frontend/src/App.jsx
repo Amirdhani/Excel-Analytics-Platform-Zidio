@@ -13,12 +13,6 @@ import History from "./pages/History";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminChartView from "./pages/AdminChartView";
 
-import axios from "axios";
-
-// Configure the Axios
-axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
-axios.defaults.withCredentials = true;
-
 
 function App() {
   return (

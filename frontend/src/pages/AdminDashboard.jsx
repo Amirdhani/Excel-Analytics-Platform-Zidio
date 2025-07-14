@@ -177,24 +177,21 @@ const AdminDashboard = () => {
               </div>
               <div>
                 <p className="text-gray-300">Top Chart Type</p>
-                <h4 className="text-xl font-bold">
+                <div className="text-xl font-bold">
                   {(() => {
                     const charts = stats?.mostUsedCharts ?? [];
-                    if (charts.length === 0) return <h4 className="text-xl font-bold">N/A (0)</h4>;
+                    if (charts.length === 0) 
+                      return "N/A (0)";
 
                     const topCount = charts[0].count;
                     const topCharts = charts.filter(c => c.count === topCount);
 
-                    return topCharts.length === 1 ? (
-                      <h4 className="text-xl font-bold capitalize">
-                        {topCharts[0]._id} ({topCharts[0].count})
-                      </h4>
-                    ) : (
-                      <h4 className="text-xl font-bold">N/A ({topCount})</h4>
-                    );
+                    return topCharts.length === 1
+                      ? `${topCharts[0]._id} (${topCharts[0].count})`
+                      : `N/A (${topCount})`;
                   })()}
 
-                </h4>
+                </div>
               </div>
             </div>
 
