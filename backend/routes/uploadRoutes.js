@@ -37,3 +37,5 @@ router.post("/upload", protect, upload.single("file"), (req, res) => {
     res.status(500).json({ message: "Error processing file", error: error.message });
   }
 });
+
+export default router;
