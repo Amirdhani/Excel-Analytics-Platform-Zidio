@@ -4,12 +4,11 @@ A powerful MERN-based web application that allows users to upload Excel files,
 analyze data, and generate interactive 2D and 3D charts. It also provides 
 user-specific upload history and a full-featured admin dashboard for managing platform usage and insights.
 
-- ☁️ Deployed on Netlify (Frontend) and Render (Backend)
-
 ## 🌐 Live Demo
 
 🔗 [Visit the App on Netlify](https://analytics-excel-platform.netlify.app)
 
+- ☁️ Deployed on Netlify (Frontend) and Render (Backend)
 
 ## 🚀 Features
 
