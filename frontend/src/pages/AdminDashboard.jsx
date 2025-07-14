@@ -38,7 +38,7 @@ const AdminDashboard = () => {
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:3000/api/admin/stats", {
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/stats`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -55,7 +55,7 @@ const AdminDashboard = () => {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:3000/api/admin/users", {
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/users`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -70,7 +70,7 @@ const AdminDashboard = () => {
   const fetchUploads = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:3000/api/analysis", {
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/analysis`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -92,7 +92,7 @@ const AdminDashboard = () => {
       totalUsers: (prevStats?.totalUsers || 1) - 1, // decrease count
     }));
 
-    await axios.delete(`http://localhost:3000/api/admin/users/${id}`, {
+    await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/admin/users/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

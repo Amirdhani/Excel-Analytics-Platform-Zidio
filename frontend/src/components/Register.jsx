@@ -26,7 +26,7 @@ const Register = () => {
     setError("");
 
     try {
-      await axios.post("http://localhost:3000/api/auth/register", formData);
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/register`, formData);
       toast.success("Registration successful!");
       navigate("/login");
     } catch (err) {

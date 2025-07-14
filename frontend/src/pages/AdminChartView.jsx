@@ -24,7 +24,7 @@ const AdminChartView = () => {
     const fetchChart = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get(`http://localhost:3000/api/admin/analysis/${id}`, {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/analysis/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
