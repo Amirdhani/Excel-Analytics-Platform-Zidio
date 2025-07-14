@@ -19,6 +19,9 @@ app.use(cors({
   origin: process.env.CLIENT_URL,
   credentials: true
 }));
+
+console.log("🌍 Allowed CORS Origin:", process.env.CLIENT_URL);
+
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
@@ -34,5 +37,5 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
+  console.log(`🚀 Server running on PORT ${PORT}`);
 });
