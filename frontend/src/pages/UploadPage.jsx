@@ -6,6 +6,8 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { motion } from "framer-motion";
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
 const Upload = () => {
   const [file, setFile] = useState(null);
   const [columns, setColumns] = useState([]);
@@ -34,7 +36,7 @@ const Upload = () => {
       formData.append("file", file);
       const token = localStorage.getItem("token");
 
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/analysis/upload`, formData, {
+      const res = await axios.post(`${backendUrl}/api/analysis/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
@@ -68,7 +70,7 @@ const Upload = () => {
       formData.append("mode", chartMode); // if your backend needs it
       const token = localStorage.getItem("token");
 
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/analysis/upload`, formData, {
+      const res = await axios.post(`${backendUrl}/api/analysis/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,

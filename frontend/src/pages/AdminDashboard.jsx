@@ -6,6 +6,8 @@ import { useNavigate, useSearchParams  } from "react-router-dom";
 import { FaUsers, FaUpload, FaChartPie, FaChartBar, FaChartLine, FaFileAlt } from "react-icons/fa";
 import { BiScatterChart } from "react-icons/bi";
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
@@ -38,7 +40,7 @@ const AdminDashboard = () => {
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/stats`, {
+      const res = await axios.get(`${backendUrl}/api/admin/stats`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -55,7 +57,7 @@ const AdminDashboard = () => {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/users`, {
+      const res = await axios.get(`${backendUrl}/api/admin/users`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -70,7 +72,7 @@ const AdminDashboard = () => {
   const fetchUploads = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/analysis`, {
+      const res = await axios.get(`${backendUrl}/api/analysis`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

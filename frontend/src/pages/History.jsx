@@ -3,6 +3,8 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
 const History = () => {
   const [history, setHistory] = useState([]);
   const [error, setError] = useState("");
@@ -14,7 +16,7 @@ const History = () => {
   const fetchHistory = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/files/history`, {
+      const res = await axios.get(`${backendUrl}/api/files/history`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setHistory(res.data);
@@ -50,7 +52,7 @@ const History = () => {
     for (let id of selectedIds) {
       try {
         const record = history.find((r) => r._id === id);
-        await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/files/history/${id}`, {
+        await axios.delete(`${backendUrl}/api/files/history/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         deletedFiles.push(record.fileName);

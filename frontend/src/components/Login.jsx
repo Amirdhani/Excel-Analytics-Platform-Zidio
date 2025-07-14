@@ -3,6 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -26,7 +28,7 @@ const Login = () => {
   setSuccess("");
 
   try {
-    const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/login`, formData);
+    const res = await axios.post(`${backendUrl}/api/auth/login`, formData);
 
     localStorage.setItem("token", res.data.token);
     localStorage.setItem("role", res.data.user.role);

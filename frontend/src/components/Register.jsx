@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
 const Register = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -26,7 +28,7 @@ const Register = () => {
     setError("");
 
     try {
-      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/register`, formData);
+      await axios.post(`${backendUrl}/api/auth/register`, formData);
       toast.success("Registration successful!");
       navigate("/login");
     } catch (err) {

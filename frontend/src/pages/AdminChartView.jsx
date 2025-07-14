@@ -3,6 +3,8 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import ChartRenderer from "../components/ChartRenderer"; 
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
 const AdminChartView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -24,7 +26,7 @@ const AdminChartView = () => {
     const fetchChart = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/analysis/${id}`, {
+        const res = await axios.get(`${backendUrl}/api/admin/analysis/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
