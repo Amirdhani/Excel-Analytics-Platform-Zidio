@@ -15,10 +15,25 @@ dotenv.config();
 const app = express();
 connectDB();
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "https://analytics-excel-platform.netlify.app"
+];
+
 app.use(cors({
-  origin: 'https://analytics-excel-platform.netlify.app',
+  origin: function (origin, callback) {
+    // allow requests with no origin (like curl or mobile apps)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
+
 app.use(express.json());
 
 // Routes
